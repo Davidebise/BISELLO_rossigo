@@ -14,5 +14,9 @@ public abstract class Veicolo {
     public abstract double calcolaCosto(int minuti);
 
     public abstract double consumoBatteriaPerMinuto();
+
+    public String getCodice() {
+        return codice;
+    }
 }
 

@@ -7,10 +7,11 @@ public class Bici extends Veicolo{
         this.numeroMarce=numeroMarce;
     }
 
+    @Override
     public double calcolaCosto(int minuti){
         return 0.15*minuti;
     }
-
+    @Override
     public double consumoBatteriaPerMinuto(){
         return 3;
     }

@@ -13,5 +13,4 @@ public class Noleggio {
         this.ora_fine=ora_fine;
     }
 
-
 }

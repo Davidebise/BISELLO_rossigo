@@ -7,10 +7,11 @@ public class Monopattino extends Veicolo{
         this.velocitaMassima=velocitaMassima;
     }
 
+    @Override
     public double calcolaCosto(int minuti){
         return 0.25*minuti;
     }
-
+    @Override
     public double consumoBatteriaPerMinuto(){
         return 5;
     }
