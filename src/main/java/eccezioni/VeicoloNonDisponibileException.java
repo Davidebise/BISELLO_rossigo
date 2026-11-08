@@ -1,6 +1,6 @@
 package eccezioni;
 
-public class VeicoloNonDisponibileException extends RuntimeException {
+public class VeicoloNonDisponibileException extends RossiGoException {
     public VeicoloNonDisponibileException(String message) {
         super(message);
     }

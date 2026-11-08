@@ -1,6 +1,8 @@
 package eccezioni;
 
-public class ErroreDatabaseException extends RuntimeException {
+import java.sql.SQLException;
+
+public class ErroreDatabaseException extends RossiGoException {
     public ErroreDatabaseException(String message) {
         super(message);
     }

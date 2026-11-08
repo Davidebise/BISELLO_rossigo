@@ -1,7 +1,7 @@
 package modello;
 
 public enum statoVeicolo {
-    libero,
-    in_uso,
-    in_ricarica
+    LIBERO,
+    IN_USO,
+    IN_RICARICA
 }

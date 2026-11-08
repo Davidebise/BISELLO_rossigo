@@ -19,6 +19,12 @@ public class Utente {
         return id;
     }
 
+    public String getEmail() {
+            return email;
+    }
+    public String getNome() {
+        return nome;
+    }
     public String getCodiceFiscale() {
         return codiceFiscale;
     }
