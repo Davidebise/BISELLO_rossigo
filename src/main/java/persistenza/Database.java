@@ -101,7 +101,7 @@ public class Database {
         }
     }
 
-    public void AggiornaStatoVeicolo(String stato,int livello){
+    public void AggiornaStatoVeicolo(int CodVeicolo,String stato,int livello){
         if(!testConnection()){
             throw new RuntimeException("Impossbile collegarsi");
         }
@@ -111,10 +111,29 @@ public class Database {
             statement=connection.prepareStatement(query);
             statement.setString(1,stato);
             statement.setInt(2,livello);
+            statement.setInt(3,CodVeicolo);
         }catch(SQLException e){
             throw new RuntimeException("Insert fallito:"+ e.getMessage());
         }
     }
+
+    public void AggiornaNoleggio(int CodVeicolo,int IdUtente, LocalDateTime ora_fine){
+        if(!testConnection()){
+            throw new RuntimeException("Impossbile collegarsi");
+        }
+        String query="UPDATE Noleggi SET OraFine=? WHERE CodVeicolo = ? AND IdUtente = ?";
+        PreparedStatement statement= null;
+        try{
+            statement=connection.prepareStatement(query);
+            statement.setObject(1,ora_fine);
+            statement.setInt(2,CodVeicolo);
+            statement.setInt(3,IdUtente);
+        }catch(SQLException e){
+            throw new RuntimeException("Insert fallito:"+ e.getMessage());
+        }
+    }
+
+
     private boolean testConnection() {
         try {
             return connection.isValid(5);

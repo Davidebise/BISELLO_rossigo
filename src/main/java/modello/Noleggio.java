@@ -14,7 +14,7 @@ public class Noleggio {
         this.ora_inizio=ora_inizio;
         this.ora_fine=null;
     }
-    public void SetOraFine(LocalDateTime ora_fine){
+    public void setOraFine(LocalDateTime ora_fine){
         this.ora_fine=ora_fine;
     }
     public int getIdUtente() {

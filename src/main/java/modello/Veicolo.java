@@ -24,5 +24,11 @@ public abstract class Veicolo {
     public String getStato() {
         return stato.toString();
     }
+    public void setStato(statoVeicolo stato) {
+        this.stato = stato;
+    }
+    public void setBatteria(int batteria) {
+        this.batteria = batteria;
+    }
 }
 

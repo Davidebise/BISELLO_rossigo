@@ -63,10 +63,11 @@ public class FlottaService {
         Noleggio noleggio = noleggi.getLast();
         database.insertNoleggio(noleggio.getIdUtente(), noleggio.getCodiceVeicolo(),noleggio.getOra_inizio(),null);
     }
-    public static void terminaNoleggio(int codice, int minutiUsati) throws RossiGoException {
+    public static void terminaNoleggio(int codice, int minutiUsati) throws RossiGoException, SQLException {
         Noleggio found=null;
         for(Noleggio noleggio : noleggi){
             if(noleggio.getCodiceVeicolo()==codice){
+                noleggio.setOraFine(noleggio.getOra_inizio().plusMinutes(minutiUsati));
                 found = noleggio;
                 break;
             }
@@ -74,6 +75,12 @@ public class FlottaService {
         if(found == null){
             throw new RossiGoException("Veicolo non trovato!");
         }
+        Veicolo v = veicoli.get(codice);
+        v.setStato(statoVeicolo.LIBERO);
+        v.setBatteria((int)(v.getBatteria()-v.consumoBatteriaPerMinuto()*minutiUsati));
+        database=Database.getInstance();
+        database.AggiornaStatoVeicolo(codice,v.getStato(),v.getBatteria());
+        database.AggiornaNoleggio(found.getIdUtente(),codice,found.getOra_fine() );
     }
 
     public static void mettiInRicarica(String codice){
