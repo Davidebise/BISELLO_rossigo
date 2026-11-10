@@ -65,6 +65,9 @@ public class FlottaService {
     }
     public static void terminaNoleggio(int codice, int minutiUsati) throws RossiGoException, SQLException {
         Noleggio found=null;
+        if(minutiUsati<=0){
+            throw new RossiGoException("Minuti non validi!");
+        }
         for(Noleggio noleggio : noleggi){
             if(noleggio.getCodiceVeicolo()==codice){
                 noleggio.setOraFine(noleggio.getOra_inizio().plusMinutes(minutiUsati));
@@ -76,14 +79,28 @@ public class FlottaService {
             throw new RossiGoException("Veicolo non trovato!");
         }
         Veicolo v = veicoli.get(codice);
-        v.setStato(statoVeicolo.LIBERO);
+        Utente u = utenti.get(found.getIdUtente());
+        double scala_credito=1+v.calcolaCosto(minutiUsati);
+        if(u.getCredito()-scala_credito < 0){  //scalo credito all'utente
+            u.setCredito(0);
+        }else{
+            u.setCredito(u.getCredito()-scala_credito);
+        }
+
+        v.setStato(statoVeicolo.LIBERO); // imposto il veicolo come libero
         v.setBatteria((int)(v.getBatteria()-v.consumoBatteriaPerMinuto()*minutiUsati));
-        database=Database.getInstance();
+        database=Database.getInstance(); //aggiorno tutto sul database
         database.AggiornaStatoVeicolo(codice,v.getStato(),v.getBatteria());
-        database.AggiornaNoleggio(found.getIdUtente(),codice,found.getOra_fine() );
+        database.AggiornaNoleggio(found.getIdUtente(),codice,found.getOra_fine());
+        database.AggiornaCreditoUtente(u.getId(),u.getCredito());
     }
 
-    public static void mettiInRicarica(String codice){
-
+    public static void mettiInRicarica(int codice) throws RossiGoException {
+        Veicolo v = veicoli.get(codice);
+        if(!veicoli.containsKey(codice)){
+            throw new RossiGoException("Veicolo non trovato!");
+        }
+        v.setStato(statoVeicolo.IN_RICARICA);
+        database.AggiornaStatoVeicolo(codice,v.getStato(),v.getBatteria());
     }
 }

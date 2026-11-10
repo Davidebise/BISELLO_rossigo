@@ -19,10 +19,10 @@ public class Database {
         return instance;
     }
 
-    public void insertUtente(int id,String nome,String email,String codiceFiscale,double credito){
+    public void insertUtente(int id,String nome,String email,String codiceFiscale,double credito) throws ErroreDatabaseException {
         //Test connessione
         if(!testConnection()){
-            throw new RuntimeException("Impossbile collegarsi");
+            throw new ErroreDatabaseException("Impossbile collegarsi");
         }
         //Preparazione query
         String query="INSERT INTO Utenti (IdUtente, Nome, Email, CodiceFiscale, Credito) VALUES (?, ?, ?, ?, ?)";
@@ -36,15 +36,15 @@ public class Database {
             statement.setDouble(5, credito);
             statement.execute();
         } catch (SQLException e) {
-            throw new RuntimeException("Insert fallito:"+ e.getMessage());
+            throw new ErroreDatabaseException("Insert fallito:"+ e.getMessage());
         }
         //Esecuzione query
     }
 
-    public void insertVeicolo(int codice,int batteria,String stato,String tipo){
+    public void insertVeicolo(int codice,int batteria,String stato,String tipo) throws ErroreDatabaseException {
         //Test connessione
         if(!testConnection()){
-            throw new RuntimeException("Impossbile collegarsi");
+            throw new ErroreDatabaseException("Impossbile collegarsi");
         }
         //Preparazione query
         String query="INSERT INTO Veicoli (CodVeicolo, LivelloBatteria, Stato, Tipo) VALUES (?, ?, ?, ?)";
@@ -57,16 +57,16 @@ public class Database {
             statement.setString(4, tipo);
             statement.execute();
         } catch (SQLException e) {
-            throw new RuntimeException("Insert fallito:"+ e.getMessage());
+            throw new ErroreDatabaseException("Insert fallito:"+ e.getMessage());
         }
         //Esecuzione query
     }
 
 
-    public void insertNoleggio(int idUtente, int codiceVeicolo, LocalDateTime ora_inizio, LocalDateTime ora_fine){
+    public void insertNoleggio(int idUtente, int codiceVeicolo, LocalDateTime ora_inizio, LocalDateTime ora_fine) throws ErroreDatabaseException {
         //Test connessione
         if(!testConnection()){
-            throw new RuntimeException("Impossbile collegarsi");
+            throw new ErroreDatabaseException("Impossbile collegarsi");
         }
         //Preparazione query
         String query="INSERT INTO Noleggi (IdUtente, CodVeicolo, OraInizio, OraFine) VALUES (?, ?, ?, ?)";
@@ -79,14 +79,14 @@ public class Database {
             statement.setObject(4, ora_fine);
             statement.execute();
         } catch (SQLException e) {
-            throw new RuntimeException("Insert fallito:"+ e.getMessage());
+            throw new ErroreDatabaseException("Insert fallito:"+ e.getMessage());
         }
         //Esecuzione query
     }
 
-    public void AggiornaCreditoUtente(int idUtente,double credito){
+    public void AggiornaCreditoUtente(int idUtente,double credito) throws ErroreDatabaseException {
         if(!testConnection()){
-            throw new RuntimeException("Impossbile collegarsi");
+            throw new ErroreDatabaseException("Impossbile collegarsi");
         }
 
         String query= "UPDATE Utenti SET Credito = ? WHERE IdUtente = ?";
@@ -97,13 +97,13 @@ public class Database {
             statement.setInt(2, idUtente);
             statement.execute();
         }catch(SQLException e){
-            throw new RuntimeException("Insert fallito:"+ e.getMessage());
+            throw new ErroreDatabaseException("Insert fallito:"+ e.getMessage());
         }
     }
 
-    public void AggiornaStatoVeicolo(int CodVeicolo,String stato,int livello){
+    public void AggiornaStatoVeicolo(int CodVeicolo,String stato,int livello) throws ErroreDatabaseException {
         if(!testConnection()){
-            throw new RuntimeException("Impossbile collegarsi");
+            throw new ErroreDatabaseException("Impossbile collegarsi");
         }
         String query="UPDATE Veicoli SET Stato=?,LivelloBatteria=? WHERE CodVeicolo = ?";
         PreparedStatement statement= null;
@@ -113,13 +113,13 @@ public class Database {
             statement.setInt(2,livello);
             statement.setInt(3,CodVeicolo);
         }catch(SQLException e){
-            throw new RuntimeException("Insert fallito:"+ e.getMessage());
+            throw new ErroreDatabaseException("Insert fallito:"+ e.getMessage());
         }
     }
 
-    public void AggiornaNoleggio(int CodVeicolo,int IdUtente, LocalDateTime ora_fine){
+    public void AggiornaNoleggio(int CodVeicolo,int IdUtente, LocalDateTime ora_fine) throws ErroreDatabaseException {
         if(!testConnection()){
-            throw new RuntimeException("Impossbile collegarsi");
+            throw new ErroreDatabaseException("Impossbile collegarsi");
         }
         String query="UPDATE Noleggi SET OraFine=? WHERE CodVeicolo = ? AND IdUtente = ?";
         PreparedStatement statement= null;
@@ -129,7 +129,7 @@ public class Database {
             statement.setInt(2,CodVeicolo);
             statement.setInt(3,IdUtente);
         }catch(SQLException e){
-            throw new RuntimeException("Insert fallito:"+ e.getMessage());
+            throw new ErroreDatabaseException("Insert fallito:"+ e.getMessage());
         }
     }
 

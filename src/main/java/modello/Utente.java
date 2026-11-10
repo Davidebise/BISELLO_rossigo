@@ -32,4 +32,7 @@ public class Utente {
     public double getCredito() {
         return credito;
     }
+    public void setCredito(double credito) {
+        this.credito = credito;
+    }
 }
