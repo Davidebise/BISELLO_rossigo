@@ -8,11 +8,12 @@ import java.time.LocalDateTime;
 public class Database {
     private Connection connection = null;
     private static Database instance;
-    private Database() throws SQLException {
+    private Database() throws SQLException, ErroreDatabaseException {
         connection = DriverManager.getConnection("jdbc:sqlite:database.db");
+        creaTabelle();
     }
 
-    public static Database getInstance() throws SQLException {
+    public static Database getInstance() throws SQLException, ErroreDatabaseException {
         if(instance == null){
             instance = new Database();
         }
@@ -112,6 +113,7 @@ public class Database {
             statement.setString(1,stato);
             statement.setInt(2,livello);
             statement.setInt(3,CodVeicolo);
+            statement.execute();
         }catch(SQLException e){
             throw new ErroreDatabaseException("Insert fallito:"+ e.getMessage());
         }
@@ -128,11 +130,41 @@ public class Database {
             statement.setObject(1,ora_fine);
             statement.setInt(2,CodVeicolo);
             statement.setInt(3,IdUtente);
+            statement.execute();
         }catch(SQLException e){
             throw new ErroreDatabaseException("Insert fallito:"+ e.getMessage());
         }
     }
 
+    private void creaTabelle() throws ErroreDatabaseException {
+        String sqlUtenti = "CREATE TABLE IF NOT EXISTS Utenti (" +
+                "IdUtente INTEGER PRIMARY KEY, " +
+                "Nome VARCHAR(50) not null, " +
+                "Email VARCHAR(50), " +
+                "CodiceFiscale VARCHAR(20), " +
+                "Credito DOUBLE);";
+
+        String sqlVeicoli = "CREATE TABLE IF NOT EXISTS Veicoli (" +
+                "CodVeicolo INTEGER PRIMARY KEY, " +
+                "LivelloBatteria INTEGER, " +
+                "Stato VARCHAR(20) check (Stato IN ('LIBERO', 'IN_USO', 'IN_RICARICA')), " +
+                "Tipo VARCHAR(20));";
+
+        String sqlNoleggi = "CREATE TABLE IF NOT EXISTS Noleggi (" +
+                "IdUtente INTEGER, " +
+                "CodVeicolo INTEGER, " +
+                "OraInizio DATETIME, " +
+                "OraFine DATETIME," +
+                "PRIMARY KEY(IdUtente,CodVeicolo,OraInizio));";
+
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute(sqlUtenti);
+            stmt.execute(sqlVeicoli);
+            stmt.execute(sqlNoleggi);
+        } catch (SQLException e) {
+            throw new ErroreDatabaseException("Errore nella creazione delle tabelle: " + e.getMessage());
+        }
+    }
 
     private boolean testConnection() {
         try {

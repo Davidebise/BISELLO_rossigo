@@ -2,7 +2,7 @@ package modello;
 
 public class Bici extends Veicolo{
     private int numeroMarce;
-    public Bici(String codice,int batteria,statoVeicolo stato,int numeroMarce){
+    public Bici(int codice,int batteria,statoVeicolo stato,int numeroMarce){
         super(codice,batteria,stato);
         this.numeroMarce=numeroMarce;
     }

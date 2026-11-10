@@ -1,7 +1,8 @@
-package modello;
+package servizio;
 
 import eccezioni.*;
 import it.kamaladafrica.codicefiscale.CodiceFiscale;
+import modello.*;
 import persistenza.Database;
 
 import java.sql.SQLException;
@@ -12,8 +13,8 @@ import java.util.Objects;
 
 
 public class FlottaService {
-    static private HashMap<Integer,Utente> utenti = new HashMap<Integer,Utente>();
-    static private HashMap<Integer,Veicolo> veicoli = new HashMap<Integer,Veicolo>();
+    static private HashMap<Integer, Utente> utenti = new HashMap<Integer,Utente>();
+    static private HashMap<Integer, Veicolo> veicoli = new HashMap<Integer,Veicolo>();
     static private ArrayList<Noleggio> noleggi = new ArrayList<Noleggio>();
     static private Database database = null;
 
@@ -44,12 +45,12 @@ public class FlottaService {
 
     public static void sbloccaVeicolo(int codice, int idUtente) throws RossiGoException, SQLException {
         if(!utenti.containsKey(idUtente)){
-            throw new UtenteNonTrovatoException("Id Utente già utilizzato!");
+            throw new UtenteNonTrovatoException("Utente non trovato!");
         }
         if(!veicoli.containsKey(codice)){
             throw new RossiGoException("Veicolo non trovato!");
         }
-        if(Objects.equals(veicoli.get(codice).getStato(), "IN_USO")){
+        if(veicoli.get(codice).getStato().equals("IN_USO")){
             throw new VeicoloNonDisponibileException("Veicolo già in uso!");
         }
         if(veicoli.get(codice).getBatteria()<=15){
@@ -58,6 +59,7 @@ public class FlottaService {
         if(utenti.get(idUtente).getCredito()<1){
             throw new CreditoInsufficienteException("Credito insufficiente!");
         }
+        veicoli.get(codice).setStato(statoVeicolo.IN_USO);
         database=Database.getInstance();
         noleggi.add(new Noleggio(utenti.get(idUtente),veicoli.get(codice),LocalDateTime.now()));
         Noleggio noleggio = noleggi.getLast();
@@ -91,15 +93,16 @@ public class FlottaService {
         v.setBatteria((int)(v.getBatteria()-v.consumoBatteriaPerMinuto()*minutiUsati));
         database=Database.getInstance(); //aggiorno tutto sul database
         database.AggiornaStatoVeicolo(codice,v.getStato(),v.getBatteria());
-        database.AggiornaNoleggio(found.getIdUtente(),codice,found.getOra_fine());
+        database.AggiornaNoleggio(codice,found.getIdUtente(),found.getOra_fine());
         database.AggiornaCreditoUtente(u.getId(),u.getCredito());
     }
 
     public static void mettiInRicarica(int codice) throws RossiGoException {
-        Veicolo v = veicoli.get(codice);
+
         if(!veicoli.containsKey(codice)){
             throw new RossiGoException("Veicolo non trovato!");
         }
+        Veicolo v = veicoli.get(codice);
         v.setStato(statoVeicolo.IN_RICARICA);
         database.AggiornaStatoVeicolo(codice,v.getStato(),v.getBatteria());
     }
